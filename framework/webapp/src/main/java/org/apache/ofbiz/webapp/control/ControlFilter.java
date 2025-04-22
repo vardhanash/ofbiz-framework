@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -62,7 +62,7 @@ import org.apache.ofbiz.security.SecuredUpload;
  *     non matching request paths are redirected, or an error code is returned,
  *     according to the setup of redirectPath and errorCode
  *   - redirectPath: if the path requested is not in the allowedPaths, or forceRedirectAll is set to Y,
- *     specifies the the path to which the request is redirected to;
+ *     specifies the path to which the request is redirected to;
  *   - errorCode: the error code set in the response if the path requested is not in the allowedPaths
  *     and redirectPath is not set; defaults to 403
  *
@@ -136,13 +136,6 @@ public class ControlFilter extends HttpFilter {
     }
 
     /**
-     * Allows Solr tests
-     */
-    private static boolean isSolrTest() {
-        return null != System.getProperty("SolrDispatchFilter");
-    }
-
-    /**
      * Sends an HTTP response redirecting to {@code redirectPath}.
      * @param resp The response to send
      * @param contextPath the prefix to add to the redirection when
@@ -187,10 +180,10 @@ public class ControlFilter extends HttpFilter {
 
             //// Block with several steps for rejecting wrong URLs, allowing specific ones
 
-            // Allows UEL and FlexibleString (OFBIZ-12602). Also allows SolrTest to pass. No need to check these URLs
+            // Allows UEL and FlexibleString (OFBIZ-12602).
             GenericValue userLogin = (GenericValue) session.getAttribute("userLogin");
             if (!LoginWorker.hasBasePermission(userLogin, req)) { // Allows UEL and FlexibleString (OFBIZ-12602)
-                if (isSolrTest() && SecuredFreemarker.containsFreemarkerInterpolation(req, resp, uri)) { // Reject Freemarker interpolation in URL
+                if (SecuredFreemarker.containsFreemarkerInterpolation(req, resp, uri)) { // Reject Freemarker interpolation in URL
                     return;
                 }
             }
